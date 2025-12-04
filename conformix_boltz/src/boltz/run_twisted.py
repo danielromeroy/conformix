@@ -714,7 +714,7 @@ def predict(
     data: str,
     out_dir: str,
     input_cif: str,
-    subset_residues: Optional[List[Union[int, List[int], str]]] = None,
+    subset_residues: Optional[str] = None,
     cache: str = "~/.boltz",
     checkpoint: Optional[str] = None,
     devices: int = 1,
