@@ -52,32 +52,32 @@ def main():
     )
 
     # --- Core Inputs ---
-    parser.add_argument("--fasta_path", type=Path, required=True, help="Path to the input FASTA file.")
-    parser.add_argument("--out_dir", type=Path, required=True, help="Directory to save all outputs.")
+    parser.add_argument("--fasta-path", type=Path, required=True, help="Path to the input FASTA file.")
+    parser.add_argument("--out-dir", type=Path, required=True, help="Directory to save all outputs.")
 
     # --- Guidance Settings ---
     parser.add_argument(
-        "--structured_regions_only",
+        "--structured-regions-only",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Guide RMSD on structured regions (alpha-helices/beta-sheets) only. Use --no-structured_regions_only to guide on the full sequence backbone.",
+        help="Guide RMSD on structured regions (alpha-helices/beta-sheets) only. Use --no-structured-regions-only to guide on the full sequence backbone.",
     )
-    parser.add_argument("--reference_cif", type=Path, default=None, help="Optional path to a reference CIF file for RMSD guidance. If not provided, one will be generated.")
     parser.add_argument(
-        "--subset_residues",
+        "--subset-residues",
         type=str,
         default=None,
-        help="A comma-separated list of residue ranges (e.g., '10-20,45-55') to include in the RMSD calculation. If provided, this subset is used for the RMSD. Can be combined with --structured_regions_only.",
+        help="A comma-separated list of residue ranges (e.g., '10-20,45-55') to include in the RMSD calculation. If provided, this subset is used for the RMSD. Can be combined with --structured-regions-only.",
     )
+    parser.add_argument("--reference-cif", type=Path, default=None, help="Optional path to a reference CIF file for RMSD guidance. If not provided, one will be generated.")
 
     # --- Sampling Parameters ---
-    parser.add_argument("--twist_target_start", type=float, default=0.0, help="Start value for the target RMSD in Angstroms.")
-    parser.add_argument("--twist_target_stop", type=float, default=10.0, help="Stop value for the target RMSD.")
-    parser.add_argument("--num_twist_targets", type=int, default=11, help="Number of target RMSD values to sample between start and stop (inclusive).")
-    parser.add_argument("--samples_per_target", type=int, default=3, help="Number of structures to generate for each target value (sets 'diffusion_samples').")
+    parser.add_argument("--twist-target-start", type=float, default=0.0, help="Start value for the target RMSD in Angstroms.")
+    parser.add_argument("--twist-target-stop", type=float, default=10.0, help="Stop value for the target RMSD.")
+    parser.add_argument("--num-twist-targets", type=int, default=11, help="Number of target RMSD values to sample between start and stop (inclusive).")
+    parser.add_argument("--samples-per-target", type=int, default=3, help="Number of structures to generate for each target value (sets 'diffusion_samples').")
     
     # --- Advanced Settings ---
-    parser.add_argument("--twist_strength", type=float, default=15.0, help="Strength parameter for guidance.")
+    parser.add_argument("--twist-strength", type=float, default=15.0, help="Strength parameter for guidance.")
     parser.add_argument("--tstart", type=str, default="200", help="Timestep on which to start applying guidance.")
     parser.add_argument("--tstop", type=str, default="0", help="Timestep on which to stop applying guidance.")
     
@@ -169,23 +169,24 @@ def main():
     print(f"Target RMSDs (Å): {[f'{v:.2f}' for v in twist_target_values]}")
     try:
         run_twisted.predict.callback(**twisted_params)
-        print("\n✅ Guided sampling generation complete!")
+        print("\nGuided sampling generation complete.")
         print(f"Results saved in: {args.out_dir}")
     except Exception as e:
-        print(f"\n❌ An error occurred during prediction: {e}")
+        print(f"\nAn error occurred during prediction: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
 
     # --- 6. Filter generated samples ---
-    print("f\nFiltering samples for physicality and sorting by Principal Component 1")
+    print("\nFiltering samples for physicality and sorting by Principal Component 1")
     filter_out = str(args.out_dir / "final_filtered")
     cif_to_xtc.process_all_cifs_to_single_output(
             parent_dir=args.out_dir,
             output_dir=filter_out)
-    print("\n✅ Samples filtered and sorted!")
+    print("\nSamples filtered and sorted.")
     print(f"Results saved in: {filter_out}")
 
 
 if __name__ == "__main__":
     main()
+             
