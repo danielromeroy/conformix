@@ -458,7 +458,7 @@ def get_secondary_structure_region_masks(structure_file, subset_residues=None):
     
     # If subset_residues is supplied, create mask of inluded residues only
     subset_set = set()
-    if subset_residues is not None:
+    if subset_residues is not None and subset_residues.strip(): # not None and not whitespace
         # Parse comma-separated string: "100,50-55,105-110"
         items = [item.strip() for item in subset_residues.split(',')]
         

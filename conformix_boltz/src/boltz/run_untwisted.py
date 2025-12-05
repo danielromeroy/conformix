@@ -585,6 +585,7 @@ def load_model(
         diffusion_samples: int = 1,
         write_full_pae: bool = True,
         write_full_pde: bool = True,
+        device: str = "cpu",
     ) -> Boltz1:
 
     # Set cache path
@@ -609,7 +610,7 @@ def load_model(
         checkpoint,
         strict=True,
         predict_args=predict_args,
-        map_location="cpu",
+        map_location=device,
         diffusion_process_args=asdict(BoltzDiffusionParams()),
         ema=False,
         conformix=True,
