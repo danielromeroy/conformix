@@ -696,7 +696,7 @@ def cli() -> None:
 @click.option(
     "--use_msa_server",
     is_flag=True,
-    help="Whether to use the MMSeqs2 server for MSA generation. Default is False.",
+    help="Whether to use the MMSeqs2 server for MSA generation. Default is True.",
 )
 @click.option(
     "--msa_server_url",
@@ -728,7 +728,7 @@ def predict(
     num_workers: int = 2,
     override: bool = False,
     seed: Optional[int] = None,
-    use_msa_server: bool = False,
+    use_msa_server: bool = True,
     msa_server_url: str = "https://api.colabfold.com",
     msa_pairing_strategy: str = "greedy",
     conformix: bool = True,
