@@ -702,7 +702,7 @@ def cli() -> None:
     "--msa_server_url",
     type=str,
     help="MSA server url. Used only if --use_msa_server is set. ",
-    default="https://api.colabfold.com",
+    default="",
 )
 @click.option(
     "--msa_pairing_strategy",
@@ -729,7 +729,7 @@ def predict(
     override: bool = False,
     seed: Optional[int] = None,
     use_msa_server: bool = True,
-    msa_server_url: str = "https://api.colabfold.com",
+    msa_server_url: str = "",
     msa_pairing_strategy: str = "greedy",
     conformix: bool = True,
     twist_target_values: Union[float, List[float]] = 1.0,
