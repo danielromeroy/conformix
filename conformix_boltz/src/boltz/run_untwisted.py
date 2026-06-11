@@ -13,7 +13,6 @@ from tqdm import tqdm
 
 from boltz.data import const
 from boltz.data.module.inference import BoltzInferenceDataModule
-from boltz.data.msa.mmseqs2 import run_mmseqs2
 from boltz.data.parse.a3m import parse_a3m
 from boltz.data.parse.csv import parse_csv
 from boltz.data.parse.fasta import parse_fasta
@@ -308,54 +307,55 @@ def compute_msa(
         The MSA pairing strategy.
 
     """
-    if len(data) > 1:
-        paired_msas = run_mmseqs2(
-            list(data.values()),
-            msa_dir / f"{target_id}_paired_tmp",
-            use_env=True,
-            use_pairing=True,
-            host_url=msa_server_url,
-            pairing_strategy=msa_pairing_strategy,
-        )
-    else:
-        paired_msas = [""] * len(data)
+    raise NotImplementedError
+    # if len(data) > 1:
+    #     paired_msas = run_mmseqs2(
+    #         list(data.values()),
+    #         msa_dir / f"{target_id}_paired_tmp",
+    #         use_env=True,
+    #         use_pairing=True,
+    #         host_url=msa_server_url,
+    #         pairing_strategy=msa_pairing_strategy,
+    #     )
+    # else:
+    #     paired_msas = [""] * len(data)
 
-    unpaired_msa = run_mmseqs2(
-        list(data.values()),
-        msa_dir / f"{target_id}_unpaired_tmp",
-        use_env=True,
-        use_pairing=False,
-        host_url=msa_server_url,
-        pairing_strategy=msa_pairing_strategy,
-    )
+    # unpaired_msa = run_mmseqs2(
+    #     list(data.values()),
+    #     msa_dir / f"{target_id}_unpaired_tmp",
+    #     use_env=True,
+    #     use_pairing=False,
+    #     host_url=msa_server_url,
+    #     pairing_strategy=msa_pairing_strategy,
+    # )
 
-    for idx, name in enumerate(data):
-        # Get paired sequences
-        paired = paired_msas[idx].strip().splitlines()
-        paired = paired[1::2]  # ignore headers
-        paired = paired[: const.max_paired_seqs]
+    # for idx, name in enumerate(data):
+    #     # Get paired sequences
+    #     paired = paired_msas[idx].strip().splitlines()
+    #     paired = paired[1::2]  # ignore headers
+    #     paired = paired[: const.max_paired_seqs]
 
-        # Set key per row and remove empty sequences
-        keys = [idx for idx, s in enumerate(paired) if s != "-" * len(s)]
-        paired = [s for s in paired if s != "-" * len(s)]
+    #     # Set key per row and remove empty sequences
+    #     keys = [idx for idx, s in enumerate(paired) if s != "-" * len(s)]
+    #     paired = [s for s in paired if s != "-" * len(s)]
 
-        # Combine paired-unpaired sequences
-        unpaired = unpaired_msa[idx].strip().splitlines()
-        unpaired = unpaired[1::2]
-        unpaired = unpaired[: (const.max_msa_seqs - len(paired))]
-        if paired:
-            unpaired = unpaired[1:]  # ignore query is already present
+    #     # Combine paired-unpaired sequences
+    #     unpaired = unpaired_msa[idx].strip().splitlines()
+    #     unpaired = unpaired[1::2]
+    #     unpaired = unpaired[: (const.max_msa_seqs - len(paired))]
+    #     if paired:
+    #         unpaired = unpaired[1:]  # ignore query is already present
 
-        # Combine
-        seqs = paired + unpaired
-        keys = keys + [-1] * len(unpaired)
+    #     # Combine
+    #     seqs = paired + unpaired
+    #     keys = keys + [-1] * len(unpaired)
 
-        # Dump MSA
-        csv_str = ["key,sequence"] + [f"{key},{seq}" for key, seq in zip(keys, seqs)]
+    #     # Dump MSA
+    #     csv_str = ["key,sequence"] + [f"{key},{seq}" for key, seq in zip(keys, seqs)]
 
-        msa_path = msa_dir / f"{name}.csv"
-        with msa_path.open("w") as f:
-            f.write("\n".join(csv_str))
+    #     msa_path = msa_dir / f"{name}.csv"
+    #     with msa_path.open("w") as f:
+    #         f.write("\n".join(csv_str))
 
 
 @rank_zero_only
@@ -756,7 +756,7 @@ def predict(
     num_workers: int = 2,
     override: bool = False,
     seed: Optional[int] = None,
-    use_msa_server: bool = True,
+    use_msa_server: bool = False,
     single_sequence_mode: bool = False,
     msa_server_url: str = "",
     msa_pairing_strategy: str = "greedy",
